@@ -1,0 +1,52 @@
+#### all connection ####
+nmcli [OPTIONS] OBJECT {COMMAND}
+
+
+#### status ####
+nmcli con show
+nmcli con show --active #active 연결만 표시
+
+#### ip config - default static ####
+nmcli con mod "interface name" ipv4.address x.x.x.x/prefix ipv4.gateway x.x.x.x ipv4.dns "x.x.x.x"
+
+
+#### networking command ####
+nmcli networking { on  | off | connectivity } ARG
+
+
+#### hostname check ####
+nmcli g h
+
+# ifcfg =
+nmcli c m eth0 ipv4.method manual #BOOTPROTO=none or static
+nmcli c m eth0 connection.autoconnect yes #ONBBOT=yes
+nmcli c m eth0 ipv4.addresses 10.20.30.41/24 #IPADDR= PREFIX=
+nmcli c m eth0 ipv4.gateway 10.20.30.254 #GATEWAY=
+nmcli c m eth0 ipv4.dns "168.126.63.1 168.126.63.2" #DNS1= DNS=2
+
+or
+
+nmcli c m eth0 ipv4.method manual connection.autoconnect yes ipv4.addresses 10.20.30.41/24 ipv4.gateway 10.20.30.254 ipv4.dns "168.126.63.1 168.126.63.2"
+
+
+systemctl restart NetworkManager.service
+
+#### Bonding ####
+nmcli con add con-name bond0 type bond ifname bond0 mode 802.ad
+nmcli con add con-name bond0 type bond ifname bond0 bond.options "mode=4,miimon=100"
+
+
+nmcli con add con-name eno1 type ethernet ifname ens224 master bond0
+nmcli con add con-name eno1 type ethernet ifname ens224 master bond0
+
+nmcli con reload #ifcfg 파일 수정시 필수
+nmcli con up bonding0 #dev에 설정을 적용시키기 위해 내렸다 올리는 과정
+
+
+
+
+
+
+TIPS
+remote env command example
+nmcli con down ens32 ; nmcli con up ens32
